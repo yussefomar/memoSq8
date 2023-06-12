@@ -1,0 +1,9 @@
+__pycache__
+.env
+env
+test_db.db
+__pypackages__/
+Scripts
+*.py[cod]
+*$py.class
+lib/
