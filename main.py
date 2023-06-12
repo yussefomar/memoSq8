@@ -4,12 +4,43 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
+recursos=[
+    {
+        "codPersona":1,
+        "nombre":"jose"
+
+    }
+]
+
+tareas=[
+    {
+        "codTarea":1,
+        "titulo":"codificar"
+
+    }
+]
+
+fechas=[
+    {
+        "codFecha":1,
+        "horasParticulares":12,
+        "timeStamp":"15/02/2008"
+    }
+]
 
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+@app.get("/recursos")
+def get_recursos():
+    return recursos
+
+@app.get("/tareas")
+def get_recursos():
+    return tareas
+
+@app.get("/fechas")
+def get_recursos():
+    return fechas
