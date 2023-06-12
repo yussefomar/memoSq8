@@ -38,9 +38,9 @@ def get_recursos():
     return recursos
 
 @app.get("/tareas")
-def get_recursos():
+def get_tareas():
     return tareas
 
 @app.get("/fechas")
-def get_recursos():
+def get_fechas():
     return fechas
