@@ -16,3 +16,6 @@ uvicorn main:app --reload
 
 para ver el swagger: 8000 es el puerto por defecto
 http://127.0.0.1:8000/docs#/default/
+
+paquetes para la base de datos(mysql)
+pip install sqlalchemy pymysql cryptography
