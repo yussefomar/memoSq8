@@ -1,20 +1,11 @@
 from fastapi import APIRouter
-
+from schema.recurso_schema import RecursoSchema
 user = APIRouter()
+from config.db import conn
+from model.recursos import recursos
 
 
-recursos=[
-    {
-        "codPersona":1,
-        "nombre":"jose"
-
-    },
-    {
-        "codPersona":2,
-        "nombre":"martin"
-
-    }
-]
+ 
 
 tareas=[
     {
@@ -42,6 +33,13 @@ fechas=[
     }
 ]
 
+@user.post("/recurso")
+def create_recurso(data_recurso:RecursoSchema):
+    new_recurso=data_recurso.dict()
+    print(new_recurso)
+    conn.execute(recursos.insert().values(new_recurso))
+    return "success"
+"""
 @user.get("/")
 def read_root():
     return {"Hello": "World"}
@@ -70,3 +68,4 @@ def get_fechas():
 @user.get("/fechas/{id}")
 def get_fechas():
     return list(filter(lambda item:item['codTarea']==id,fechas))
+    """
