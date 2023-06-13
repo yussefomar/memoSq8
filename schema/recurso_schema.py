@@ -2,6 +2,6 @@ from pydantic import BaseModel
 from typing import  Optional
 
 class RecursoSchema(BaseModel):
-    codPersona:Optional[str]
+    codPersona:Optional[int]
     nombre:str
      
