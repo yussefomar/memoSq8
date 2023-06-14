@@ -7,7 +7,7 @@ from schema.bloque_laboral_schema import BloqueLaboralSchema
 user = APIRouter()
 from config.db import engine
 from model.recursos import recursos
-from model.tareas import tareas
+from model.tareas import *
 from model.bloques_laborales import bloques_laborales
 from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 
@@ -42,11 +42,13 @@ def get_tarea(codTarea:int):
         return result
 
 @user.post("/tarea", status_code=HTTP_201_CREATED)
-def create_tarea(data_tarea:TareaSchema):
-    with engine.connect() as conn:
-        new_tarea=data_tarea.dict()
-        conn.execute(tareas.insert().values(new_tarea))
-        return Response(status_code=HTTP_201_CREATED)
+async def create_tarea(data_tarea: TareaSchema) -> TareaSchema:
+    tarea = tareas_model_create_tarea(data_tarea)
+    return tarea
+    # with engine.connect() as conn:
+    #     new_tarea=data_tarea.dict()
+    #     conn.execute(tareas.insert().values(new_tarea))
+    #     return Response(status_code=HTTP_201_CREATED)
     
 @user.put("/tarea/{codTarea}")
 def update_tarea(updatedTarea:TareaSchema, codTarea:int):
