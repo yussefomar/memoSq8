@@ -1,24 +1,12 @@
 from fastapi import APIRouter, Response
 from schema.recurso_schema import RecursoSchema
+from schema.tarea_schema import TareaSchema
 user = APIRouter()
 from config.db import engine
 from model.recursos import recursos
+from model.tareas import tareas
 from starlette.status import HTTP_201_CREATED
 
- 
-
-tareas=[
-    {
-        "codTarea":1,
-        "titulo":"codificar"
-
-    },
-     {
-        "codTarea":2,
-        "titulo":"compilar"
-
-    }
-]
 
 fechas=[
     {
@@ -33,20 +21,35 @@ fechas=[
     }
 ]
 
+@user.get("/tarea")
+def get_tareas():
+    codTarea, titulo = 0, 1
+    with engine.connect() as conn:
+        result = conn.execute(tareas.select()).fetchall()
+        result = [{"codTarea":fila[codTarea], "nombre":fila[titulo]} for fila in result]
+        return result
+
+@user.post("/tarea")
+def create_tarea(data_tarea:TareaSchema, status_code=HTTP_201_CREATED):
+    with engine.connect() as conn:
+        new_tarea=data_tarea.dict()
+        conn.execute(tareas.insert().values(new_tarea))
+        return Response(status_code=HTTP_201_CREATED)
+
+
+
 @user.get("/recurso")
 def get_recursos():
     codPersona, nombre = 0, 1
     with engine.connect() as conn:
         result = conn.execute(recursos.select()).fetchall()
         result = [{"codPersona":fila[codPersona], "nombre":fila[nombre]} for fila in result]
-        print(result)
         return result
 
 @user.post("/recurso")
 def create_recurso(data_recurso:RecursoSchema, status_code=HTTP_201_CREATED):
     with engine.connect() as conn:
         new_recurso=data_recurso.dict()
-        print(new_recurso)
         conn.execute(recursos.insert().values(new_recurso))
         return Response(status_code=HTTP_201_CREATED)
 
