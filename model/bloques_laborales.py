@@ -1,5 +1,6 @@
 from sqlalchemy import Table, Column, ForeignKey
 from sqlalchemy.sql.sqltypes import Integer, String, DateTime
+from sqlalchemy.sql import text
 from config.db import engine, meta_data
 from schema.bloque_laboral_schema import BloqueLaboralSchema
 from fastapi import HTTPException
