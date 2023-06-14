@@ -21,3 +21,19 @@ def bloques_model_create(data_bloque_laboral: BloqueLaboralSchema):
             return bloque_nuevo
     except Exception as e:
         raise HTTPException(status_code=500, detail="Ocurrio un error al cargar las horas laborales")
+
+def bloques_model_get() -> list[BloqueLaboralSchema]:
+    try:
+        with engine.connect() as conn:
+            result = conn.execute(bloques_laborales.select()).fetchall()
+            bloques = []
+            for item in result:
+                bloques.append({"codBloqueLaboral":item.codBloqueLaboral,\
+                                 "codTarea":item.codTarea,\
+                                "legajo": item.legajo,\
+                                "horasDelBloque": item.horasDelBloque,\
+                                "fecha": item.fecha})
+            print(bloques)
+            return bloques
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Ocurrio un error al recuperar las horas laborales")

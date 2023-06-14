@@ -102,19 +102,18 @@ def get_recurso(legajo:int):
         return response.status_code
 
 @user.get("/bloque_laboral")
-def get_bloques_laborales():
-    codBloqueLaboral, codTarea, legajo = 0, 1, 2
-    horasDelBloque, fecha = 3, 4
-    with engine.connect() as conn:
-        result = conn.execute(bloques_laborales.select()).fetchall()
-        print(result)
-        result_as_json = [{"codBloqueLaboral":bloque[codBloqueLaboral], "codTarea":bloque[codTarea],
-                  "legajo": bloque[legajo], "horasDelBloque": bloque[horasDelBloque],
-                  "fecha": bloque[fecha]} for bloque in result]
-        return result_as_json
+async def get_bloques_laborales() -> list[BloqueLaboralSchema]:
+    lista_bloques = bloques_model_get()
+    return lista_bloques
+    # with engine.connect() as conn:
+    #     result = conn.execute(bloques_laborales.select()).fetchall()
+    #     print(result)
+    #     result_as_json = [{"codBloqueLaboral":bloque[codBloqueLaboral], "codTarea":bloque[codTarea],
+    #               "legajo": bloque[legajo], "horasDelBloque": bloque[horasDelBloque],
+    #               "fecha": bloque[fecha]} for bloque in result]
 
 @user.post("/bloque_laboral", status_code=HTTP_201_CREATED)
-async def create_tarea(data_bloque_laboral:BloqueLaboralSchema) -> BloqueLaboralSchema:
+async def create_bloque(data_bloque_laboral:BloqueLaboralSchema) -> BloqueLaboralSchema:
     bloque = bloques_model_create(data_bloque_laboral)
     return bloque
     # with engine.connect() as conn:
