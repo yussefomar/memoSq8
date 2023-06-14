@@ -6,7 +6,7 @@ user = APIRouter()
 from config.db import engine
 from model.recursos import recursos
 from model.tareas import tareas
-from starlette.status import HTTP_201_CREATED
+from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 
 
 fechas=[
@@ -38,8 +38,8 @@ def get_tarea(codTarea:int):
         result = {result[codigo]:result[titulo]}
         return result
 
-@user.post("/tarea")
-def create_tarea(data_tarea:TareaSchema, status_code=HTTP_201_CREATED):
+@user.post("/tarea", status_code=HTTP_201_CREATED)
+def create_tarea(data_tarea:TareaSchema):
     with engine.connect() as conn:
         new_tarea=data_tarea.dict()
         conn.execute(tareas.insert().values(new_tarea))
@@ -53,6 +53,12 @@ def update_tarea(updatedTarea:TareaSchema, codTarea:int):
         result = conn.execute(tareas.select().where(tareas.c.codTarea == codTarea)).first()
         result = {result[codigo]:result[titulo]}
         return result
+
+@user.delete("/tarea/{codTarea}", status_code=HTTP_204_NO_CONTENT)
+def delete_tarea(codTarea:int):
+    with engine.connect() as conn:
+        conn.execute(tareas.delete().where(tareas.c.codTarea == codTarea))
+        return Response(status_code = HTTP_204_NO_CONTENT)
 
 @user.get("/recurso")
 def get_recursos():
