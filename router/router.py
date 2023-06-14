@@ -114,6 +114,8 @@ async def get_bloques_laborales() -> list[BloqueLaboralSchema]:
 
 @user.post("/bloque_laboral", status_code=HTTP_201_CREATED)
 async def create_bloque(data_bloque_laboral:BloqueLaboralSchema) -> BloqueLaboralSchema:
+    if bloques_model_horas_del_recurso(data_bloque_laboral) + data_bloque_laboral.horasDelBloque > 8:
+        return JSONResponse(status_code=403, content={"message": "No puedes añadir más de 8 horas en un día para un recurso"})
     bloque = bloques_model_create(data_bloque_laboral)
     return bloque
     # with engine.connect() as conn:

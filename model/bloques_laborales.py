@@ -13,6 +13,24 @@ bloques_laborales=Table("bloques_laborales", meta_data,
                )
 meta_data.create_all(engine)
 
+def bloques_model_horas_del_recurso(data_bloque_laboral: BloqueLaboralSchema):
+    try:
+        with engine.connect() as conn:
+            bloque_nuevo = data_bloque_laboral.dict()
+            horas_cargadas_en_usuario = conn.execute(
+                text(f"""
+                SELECT SUM(horasDelBloque) 
+                FROM bloques_laborales 
+                WHERE legajo={bloque_nuevo['legajo']} AND fecha='{bloque_nuevo['fecha']}';
+                """))
+            
+            return list(horas_cargadas_en_usuario)[0][0]
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Ocurrio un error al cargar las horas laborales")
+
+
+
 def bloques_model_create(data_bloque_laboral: BloqueLaboralSchema):
     try:
         with engine.connect() as conn:
