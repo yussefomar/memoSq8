@@ -26,12 +26,15 @@ fechas=[
 ]
 
 @user.get("/tarea")
-def get_tareas():
-    codTarea, titulo = 0, 1
-    with engine.connect() as conn:
-        result = conn.execute(tareas.select()).fetchall()
-        result = [{"codTarea":fila[codTarea], "nombre":fila[titulo]} for fila in result]
-        return result
+async def get_tareas() -> list[TareaSchema]:
+    lista_de_tareas = tareas_model_get_tareas()
+    return lista_de_tareas
+    #CODIGO ANTES DE REFACTOR:
+    # codTarea, titulo = 0, 1
+    # with engine.connect() as conn:
+    #     result = conn.execute(tareas.select()).fetchall()
+    #     result = [{"codTarea":fila[codTarea], "nombre":fila[titulo]} for fila in result]
+    #     return lista_de_tareas
 
 @user.get("/tarea/{}")
 def get_tarea(codTarea:int):
@@ -45,6 +48,7 @@ def get_tarea(codTarea:int):
 async def create_tarea(data_tarea: TareaSchema) -> TareaSchema:
     tarea = tareas_model_create_tarea(data_tarea)
     return tarea
+    #CODIGO ANTERIOR A REFACTOR:
     # with engine.connect() as conn:
     #     new_tarea=data_tarea.dict()
     #     conn.execute(tareas.insert().values(new_tarea))

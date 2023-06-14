@@ -18,3 +18,14 @@ def tareas_model_create_tarea(data_tarea: TareaSchema):
             return new_tarea
     except Exception as e:
         raise HTTPException(status_code=409, detail="Ya existe una tarea que corresponde a la informacion brindada.")
+
+def tareas_model_get_tareas():
+    try:
+        with engine.connect() as conn:
+            data = conn.execute(tareas.select()).fetchall()
+            result = []
+            for item in data:
+                result.append({"codTarea": item[0], "titulo": item[1]})
+            return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Ocurrio un error al recuperar las tareas.")
