@@ -27,16 +27,7 @@ class BloqueLaboralSchema(BaseModel):
         if legajo <= 0:
             raise ValueError("El valor de legajo debe ser mayor que 0")
         return legajo
-
-    @validator('codTarea')
-    def validate_codTarea(cls, codTarea):
-        if not existe_codTarea_en_basededatos(codTarea):
-            raise ValueError("El código de tarea no existe en la base de datos")
-        return codTarea
-
-def existe_codTarea_en_basededatos(codigo_tarea_a_crear: int):
-    return (tareas_model_get_tarea(codigo_tarea_a_crear)["codTarea"] == codigo_tarea_a_crear)
-
+        
 
 
 

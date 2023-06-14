@@ -8,7 +8,7 @@ user = APIRouter()
 from config.db import engine
 from model.recursos import recursos
 from model.tareas import *
-from model.bloques_laborales import bloques_laborales
+from model.bloques_laborales import *
 from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 from fastapi.responses import JSONResponse
 
@@ -37,8 +37,8 @@ async def get_tareas() -> list[TareaSchema]:
     #     result = [{"codTarea":fila[codTarea], "nombre":fila[titulo]} for fila in result]
     #     return lista_de_tareas
 
-@user.get("/tarea/{}")
-async def get_tarea(codTarea:int) -> TareaSchema:
+@user.get("/tarea/{codTarea}")
+async def get_tarea(codTarea: int) -> TareaSchema:
     tarea = tareas_model_get_tarea(codTarea)
     return tarea
     #CODIGO ANTES DE REFACTOR
@@ -114,10 +114,12 @@ def get_bloques_laborales():
         return result_as_json
 
 @user.post("/bloque_laboral", status_code=HTTP_201_CREATED)
-def create_tarea(data_bloque_laboral:BloqueLaboralSchema):
-    with engine.connect() as conn:
-        conn.execute(bloques_laborales.insert().values(data_bloque_laboral.dict()))
-        return Response(status_code=HTTP_201_CREATED)
+async def create_tarea(data_bloque_laboral:BloqueLaboralSchema) -> BloqueLaboralSchema:
+    bloque = bloques_model_create(data_bloque_laboral)
+    return bloque
+    # with engine.connect() as conn:
+    #     conn.execute(bloques_laborales.insert().values(data_bloque_laboral.dict()))
+    #     return Response(status_code=HTTP_201_CREATED)
     
 
 """

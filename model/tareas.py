@@ -34,8 +34,7 @@ def tareas_model_get_tarea(codTarea: int):
     try:
         with engine.connect() as conn:
             tarea = conn.execute(tareas.select().where(tareas.c.codTarea==codTarea)).first()
-            tarea = {"codTarea":tarea.codTarea, "titulo":tarea.titulo}
-            return tarea
+            return {"codTarea":tarea.codTarea, "titulo": tarea.titulo}
     except Exception as e:
         raise HTTPException(status_code=500, detail="Ocurrio un error al recuperar la tarea")
 
