@@ -10,6 +10,7 @@ from model.recursos import recursos
 from model.tareas import *
 from model.bloques_laborales import bloques_laborales
 from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
+from fastapi.responses import JSONResponse
 
 
 fechas=[
@@ -71,6 +72,8 @@ async def update_tarea(updatedTarea:TareaSchema) -> TareaSchema:
 def delete_tarea(codTarea:int):
     if (tareas_model_delete(codTarea) >= 1):
         return Response(status_code = HTTP_204_NO_CONTENT)
+    else:
+        return JSONResponse(status_code=404, content={"message": "La tarea no existe"})
     #CODIGO ANTES DE REFACTOR
     # with engine.connect() as conn:
     #     conn.execute(tareas.delete().where(tareas.c.codTarea == codTarea))
