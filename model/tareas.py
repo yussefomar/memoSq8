@@ -34,9 +34,17 @@ def tareas_model_get_tarea(codTarea: int):
     try:
         with engine.connect() as conn:
             tarea = conn.execute(tareas.select().where(tareas.c.codTarea==codTarea)).first()
-            print(tarea)
-            tarea = {"codTarea":tarea[0], "titulo":tarea[1]}
-            print(tarea)
+            tarea = {"codTarea":tarea.codTarea, "titulo":tarea.titulo}
             return tarea
     except Exception as e:
         raise HTTPException(status_code=500, detail="Ocurrio un error al recuperar la tarea")
+
+def tareas_model_update(updatedTarea: TareaSchema):
+    try:
+        with engine.connect() as conn:
+            conn.execute(tareas.update().values(titulo=updatedTarea.titulo).where(tareas.c.codTarea == updatedTarea.codTarea))
+            result = conn.execute(tareas.select().where(tareas.c.codTarea == updatedTarea.codTarea)).first()
+            result = {"codTarea":result.codTarea, "titulo": result.titulo}
+            return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Ocurrio un error al actualizar la tarea")

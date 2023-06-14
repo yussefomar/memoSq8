@@ -40,6 +40,7 @@ async def get_tareas() -> list[TareaSchema]:
 async def get_tarea(codTarea:int) -> TareaSchema:
     tarea = tareas_model_get_tarea(codTarea)
     return tarea
+    #CODIGO ANTES DE REFACTOR
     # with engine.connect() as conn:
     #     result = conn.execute(tareas.select().where(tareas.c.codTarea==codTarea)).first()
     #     result = {"codTarea":codTarea, "titulo":result[titulo]}
@@ -49,20 +50,21 @@ async def get_tarea(codTarea:int) -> TareaSchema:
 async def create_tarea(data_tarea: TareaSchema) -> TareaSchema:
     tarea = tareas_model_create_tarea(data_tarea)
     return tarea
-    #CODIGO ANTERIOR A REFACTOR:
+    #CODIGO ANTES DE REFACTOR
     # with engine.connect() as conn:
     #     new_tarea=data_tarea.dict()
     #     conn.execute(tareas.insert().values(new_tarea))
-    #     return Response(status_code=HTTP_201_CREATED)
+    #     return Response(status_code=HT--TP_201_CREATED)
     
 @user.put("/tarea/{codTarea}")
-def update_tarea(updatedTarea:TareaSchema, codTarea:int):
-    codigo, titulo = 0, 1
-    with engine.connect() as conn:
-        conn.execute(tareas.update().values(titulo=updatedTarea.titulo).where(tareas.c.codTarea == codTarea))
-        result = conn.execute(tareas.select().where(tareas.c.codTarea == codTarea)).first()
-        result = {"codTarea":codTarea, "titulo": result[titulo]}
-        return result
+async def update_tarea(updatedTarea:TareaSchema) -> TareaSchema:
+    tarea = tareas_model_update(updatedTarea)
+    return tarea
+    # with engine.connect() as conn:
+    #     conn.execute(tareas.update().values(titulo=updatedTarea.titulo).where(tareas.c.codTarea == codTarea))
+    #     result = conn.execute(tareas.select().where(tareas.c.codTarea == codTarea)).first()
+    #     result = {"codTarea":codTarea, "titulo": result[titulo]}
+    #     return result
 
 @user.delete("/tarea/{codTarea}", status_code=HTTP_204_NO_CONTENT)
 def delete_tarea(codTarea:int):
