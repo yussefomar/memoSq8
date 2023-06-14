@@ -29,14 +29,20 @@ def get_tareas():
         result = [{"codTarea":fila[codTarea], "nombre":fila[titulo]} for fila in result]
         return result
 
+@user.get("/tarea/{}")
+def get_tarea(codTarea:int):
+    codigo, titulo = 0, 1
+    with engine.connect() as conn:
+        result = conn.execute(tareas.select().where(tareas.c.codTarea==codTarea)).first()
+        result = {result[codigo]:result[titulo]}
+        return result
+
 @user.post("/tarea")
 def create_tarea(data_tarea:TareaSchema, status_code=HTTP_201_CREATED):
     with engine.connect() as conn:
         new_tarea=data_tarea.dict()
         conn.execute(tareas.insert().values(new_tarea))
         return Response(status_code=HTTP_201_CREATED)
-
-
 
 @user.get("/recurso")
 def get_recursos():
