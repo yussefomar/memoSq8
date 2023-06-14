@@ -1,3 +1,4 @@
+import requests
 from fastapi import APIRouter, Response
 from schema.recurso_schema import RecursoSchema
 from schema.tarea_schema import TareaSchema
@@ -46,11 +47,28 @@ def create_tarea(data_tarea:TareaSchema, status_code=HTTP_201_CREATED):
 
 @user.get("/recurso")
 def get_recursos():
-    codPersona, nombre = 0, 1
-    with engine.connect() as conn:
-        result = conn.execute(recursos.select()).fetchall()
-        result = [{"codPersona":fila[codPersona], "nombre":fila[nombre]} for fila in result]
-        return result
+    HTTP_200_OK = 200
+    API = "https://anypoint.mulesoft.com/mocking/api/v1/sources/exchange/assets/754f50e8-20d8-4223-bbdc-56d50131d0ae/recursos-psa/1.0.1/m/api/recursos" 
+    response = requests.get(API)
+    if response.status_code == HTTP_200_OK:
+        return response.json()
+    else:
+        return response.status_code
+    
+
+@user.get("/recurso/{legajo}")
+def get_recurso(legajo:int):
+    HTTP_200_OK = 200
+    API = "https://anypoint.mulesoft.com/mocking/api/v1/sources/exchange/assets/754f50e8-20d8-4223-bbdc-56d50131d0ae/recursos-psa/1.0.1/m/api/recursos" 
+    response = requests.get(API)
+    if response.status_code == HTTP_200_OK:
+        recurso = [recurso for recurso in response.json() if recurso["legajo"] == legajo]
+        return recurso
+    else:
+        return response.status_code
+
+
+"""
 
 @user.post("/recurso")
 def create_recurso(data_recurso:RecursoSchema, status_code=HTTP_201_CREATED):
@@ -59,8 +77,6 @@ def create_recurso(data_recurso:RecursoSchema, status_code=HTTP_201_CREATED):
         conn.execute(recursos.insert().values(new_recurso))
         return Response(status_code=HTTP_201_CREATED)
 
-
-"""
 
 @user.get("/recursos")
 def get_recursos():
