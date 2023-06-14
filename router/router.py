@@ -1,11 +1,14 @@
 import requests
+import json
 from fastapi import APIRouter, Response
 from schema.recurso_schema import RecursoSchema
 from schema.tarea_schema import TareaSchema
+from schema.bloque_laboral_schema import BloqueLaboralSchema
 user = APIRouter()
 from config.db import engine
 from model.recursos import recursos
 from model.tareas import tareas
+from model.bloques_laborales import bloques_laborales
 from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 
 
@@ -35,7 +38,7 @@ def get_tarea(codTarea:int):
     codigo, titulo = 0, 1
     with engine.connect() as conn:
         result = conn.execute(tareas.select().where(tareas.c.codTarea==codTarea)).first()
-        result = {result[codigo]:result[titulo]}
+        result = {"codTarea":codTarea, "titulo":result[titulo]}
         return result
 
 @user.post("/tarea", status_code=HTTP_201_CREATED)
@@ -51,7 +54,7 @@ def update_tarea(updatedTarea:TareaSchema, codTarea:int):
     with engine.connect() as conn:
         conn.execute(tareas.update().values(titulo=updatedTarea.titulo).where(tareas.c.codTarea == codTarea))
         result = conn.execute(tareas.select().where(tareas.c.codTarea == codTarea)).first()
-        result = {result[codigo]:result[titulo]}
+        result = {"codTarea":codTarea, "titulo": result[titulo]}
         return result
 
 @user.delete("/tarea/{codTarea}", status_code=HTTP_204_NO_CONTENT)
@@ -82,6 +85,24 @@ def get_recurso(legajo:int):
     else:
         return response.status_code
 
+@user.get("/bloque_laboral")
+def get_bloques_laborales():
+    codBloqueLaboral, codTarea, legajo = 0, 1, 2
+    horasDelBloque, fecha = 3, 4
+    with engine.connect() as conn:
+        result = conn.execute(bloques_laborales.select()).fetchall()
+        print(result)
+        result_as_json = [{"codBloqueLaboral":bloque[codBloqueLaboral], "codTarea":bloque[codTarea],
+                  "legajo": bloque[legajo], "horasDelBloque": bloque[horasDelBloque],
+                  "fecha": bloque[fecha]} for bloque in result]
+        return result_as_json
+
+@user.post("/bloque_laboral", status_code=HTTP_201_CREATED)
+def create_tarea(data_bloque_laboral:BloqueLaboralSchema):
+    with engine.connect() as conn:
+        conn.execute(bloques_laborales.insert().values(data_bloque_laboral.dict()))
+        return Response(status_code=HTTP_201_CREATED)
+    
 
 """
 
@@ -91,27 +112,6 @@ def create_recurso(data_recurso:RecursoSchema, status_code=HTTP_201_CREATED):
         new_recurso=data_recurso.dict()
         conn.execute(recursos.insert().values(new_recurso))
         return Response(status_code=HTTP_201_CREATED)
-
-
-@user.get("/recursos")
-def get_recursos():
-    return recursos
-
-@user.get("/recursos/{id}")
-def get_recursos(id:int):
-    return list(filter(lambda item:item['codPersona']==id,recursos))
-
-@user.get("/tareas")
-def get_tareas():
-    return tareas
-
-@user.get("/tareas/{id}")
-def get_tareas():
-    return list(filter(lambda item:item['codTarea']==id,tareas))
-
-@user.get("/fechas")
-def get_fechas():
-    return fechas
 
 @user.get("/fechas/{id}")
 def get_fechas():
