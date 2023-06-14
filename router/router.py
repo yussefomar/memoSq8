@@ -37,12 +37,13 @@ async def get_tareas() -> list[TareaSchema]:
     #     return lista_de_tareas
 
 @user.get("/tarea/{}")
-def get_tarea(codTarea:int):
-    codigo, titulo = 0, 1
-    with engine.connect() as conn:
-        result = conn.execute(tareas.select().where(tareas.c.codTarea==codTarea)).first()
-        result = {"codTarea":codTarea, "titulo":result[titulo]}
-        return result
+async def get_tarea(codTarea:int) -> TareaSchema:
+    tarea = tareas_model_get_tarea(codTarea)
+    return tarea
+    # with engine.connect() as conn:
+    #     result = conn.execute(tareas.select().where(tareas.c.codTarea==codTarea)).first()
+    #     result = {"codTarea":codTarea, "titulo":result[titulo]}
+    #     return result
 
 @user.post("/tarea", status_code=HTTP_201_CREATED)
 async def create_tarea(data_tarea: TareaSchema) -> TareaSchema:

@@ -29,3 +29,14 @@ def tareas_model_get_tareas():
             return result
     except Exception as e:
         raise HTTPException(status_code=500, detail="Ocurrio un error al recuperar las tareas.")
+
+def tareas_model_get_tarea(codTarea: int):
+    try:
+        with engine.connect() as conn:
+            tarea = conn.execute(tareas.select().where(tareas.c.codTarea==codTarea)).first()
+            print(tarea)
+            tarea = {"codTarea":tarea[0], "titulo":tarea[1]}
+            print(tarea)
+            return tarea
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Ocurrio un error al recuperar la tarea")
