@@ -44,6 +44,15 @@ def create_tarea(data_tarea:TareaSchema, status_code=HTTP_201_CREATED):
         new_tarea=data_tarea.dict()
         conn.execute(tareas.insert().values(new_tarea))
         return Response(status_code=HTTP_201_CREATED)
+    
+@user.put("/tarea/{codTarea}")
+def update_tarea(updatedTarea:TareaSchema, codTarea:int):
+    codigo, titulo = 0, 1
+    with engine.connect() as conn:
+        conn.execute(tareas.update().values(titulo=updatedTarea.titulo).where(tareas.c.codTarea == codTarea))
+        result = conn.execute(tareas.select().where(tareas.c.codTarea == codTarea)).first()
+        result = {result[codigo]:result[titulo]}
+        return result
 
 @user.get("/recurso")
 def get_recursos():
