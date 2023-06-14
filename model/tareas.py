@@ -48,3 +48,11 @@ def tareas_model_update(updatedTarea: TareaSchema):
             return result
     except Exception as e:
         raise HTTPException(status_code=500, detail="Ocurrio un error al actualizar la tarea")
+
+def tareas_model_delete(codTarea: int):
+    try:
+        with engine.connect() as conn:
+            result = conn.execute(tareas.delete().where(tareas.c.codTarea == codTarea))
+            return result.rowcount
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Ocurrió un error al eliminar la tarea")

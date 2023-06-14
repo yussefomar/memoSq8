@@ -60,6 +60,7 @@ async def create_tarea(data_tarea: TareaSchema) -> TareaSchema:
 async def update_tarea(updatedTarea:TareaSchema) -> TareaSchema:
     tarea = tareas_model_update(updatedTarea)
     return tarea
+    #CODIGO ANTES DE REFACTOR
     # with engine.connect() as conn:
     #     conn.execute(tareas.update().values(titulo=updatedTarea.titulo).where(tareas.c.codTarea == codTarea))
     #     result = conn.execute(tareas.select().where(tareas.c.codTarea == codTarea)).first()
@@ -68,9 +69,12 @@ async def update_tarea(updatedTarea:TareaSchema) -> TareaSchema:
 
 @user.delete("/tarea/{codTarea}", status_code=HTTP_204_NO_CONTENT)
 def delete_tarea(codTarea:int):
-    with engine.connect() as conn:
-        conn.execute(tareas.delete().where(tareas.c.codTarea == codTarea))
+    if (tareas_model_delete(codTarea) >= 1):
         return Response(status_code = HTTP_204_NO_CONTENT)
+    #CODIGO ANTES DE REFACTOR
+    # with engine.connect() as conn:
+    #     conn.execute(tareas.delete().where(tareas.c.codTarea == codTarea))
+    #     return Response(status_code = HTTP_204_NO_CONTENT)
 
 @user.get("/recurso")
 def get_recursos():
