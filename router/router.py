@@ -128,6 +128,17 @@ async def delete_bloque(codBloqueLaboral: int):
         return Response(status_code = HTTP_204_NO_CONTENT)
     else:
         return JSONResponse(status_code=404, content={"message": "El bloque no existe"})
+    
+@user.put("/bloque_laboral/{codBloqueLaboral}")
+async def update_bloque_laboral(updatedBloqueLaboral:BloqueLaboralSchema) -> BloqueLaboralSchema:
+    bloque_tras_update = bloques_model_update(updatedBloqueLaboral)
+    return bloque_tras_update
+    #CODIGO ANTES DE REFACTOR
+    # with engine.connect() as conn:
+    #     conn.execute(tareas.update().values(titulo=updatedTarea.titulo).where(tareas.c.codTarea == codTarea))
+    #     result = conn.execute(tareas.select().where(tareas.c.codTarea == codTarea)).first()
+    #     result = {"codTarea":codTarea, "titulo": result[titulo]}
+    #     return result
 """
 
 @user.post("/recurso")

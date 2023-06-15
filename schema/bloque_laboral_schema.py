@@ -20,6 +20,8 @@ class BloqueLaboralSchema(BaseModel):
     def validate_horasDelBloque(cls, horasDelBloque):
         if horasDelBloque < 0:
             raise ValueError("El valor de horasDelBloque debe ser mayor o igual a 0")
+        elif horasDelBloque > 8:
+            raise ValueError("No se pueden asignar bloques de más de 8 horas en un día")
         return horasDelBloque
 
     @validator('legajo')

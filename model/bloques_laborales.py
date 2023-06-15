@@ -52,10 +52,28 @@ def bloques_model_get() -> list[BloqueLaboralSchema]:
                                 "legajo": item.legajo,\
                                 "horasDelBloque": item.horasDelBloque,\
                                 "fecha": item.fecha})
-            print(bloques)
             return bloques
     except Exception as e:
         raise HTTPException(status_code=500, detail="Ocurrio un error al recuperar las horas laborales")
+    
+
+def bloques_model_update(updatedBloqueLaboral: BloqueLaboralSchema):
+    try:
+        with engine.connect() as conn:
+            conn.execute(bloques_laborales.update().values(codTarea=updatedBloqueLaboral.codTarea,
+                                                           legajo=updatedBloqueLaboral.legajo,
+                                                           horasDelBloque=updatedBloqueLaboral.horasDelBloque,
+                                                           fecha=updatedBloqueLaboral.fecha
+                                                           ).where(bloques_laborales.c.codBloqueLaboral == updatedBloqueLaboral.codBloqueLaboral))
+            item = conn.execute(bloques_laborales.select().where(bloques_laborales.c.codBloqueLaboral == updatedBloqueLaboral.codBloqueLaboral)).first()
+            result = {"codBloqueLaboral":item.codBloqueLaboral,
+                    "codTarea":item.codTarea,
+                    "legajo": item.legajo,
+                    "horasDelBloque": item.horasDelBloque,
+                    "fecha": item.fecha}
+            return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Ocurrio un error al actualizar la tarea")
 
 def bloques_model_delete(codBloqueLaboral: int):
     try:
