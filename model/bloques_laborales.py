@@ -56,3 +56,11 @@ def bloques_model_get() -> list[BloqueLaboralSchema]:
             return bloques
     except Exception as e:
         raise HTTPException(status_code=500, detail="Ocurrio un error al recuperar las horas laborales")
+
+def bloques_model_delete(codBloqueLaboral: int):
+    try:
+        with engine.connect() as conn:
+            result = conn.execute(bloques_laborales.delete().where(bloques_laborales.c.codBloqueLaboral == codBloqueLaboral))
+            return result.rowcount
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Ocurrió un error al eliminar el bloque")
