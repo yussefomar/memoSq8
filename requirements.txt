@@ -1,4 +1,4 @@
-anyio==3.7.0
+anyio
 apt-xapian-index==0.49
 asgiref==3.5.0
 blinker==1.4
