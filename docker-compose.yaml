@@ -1,7 +1,7 @@
 services:
   pythonapp:
     build: .
-    command: uvicorn main:app --host 0.0.0.0
+    command: bash -c 'while !</dev/tcp/mysql/3306; do sleep 1; done; uvicorn main:app --host 0.0.0.0'    
     depends_on:
       - mysql
     links:
