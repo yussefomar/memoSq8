@@ -1,7 +1,6 @@
 from pydantic import BaseModel, validator
 from typing import  Optional
 from datetime import datetime
-from model.tareas import tareas_model_get_tarea
 
 class BloqueLaboralSchema(BaseModel):
     codBloqueLaboral:Optional[int]

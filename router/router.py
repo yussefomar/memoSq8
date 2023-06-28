@@ -1,13 +1,9 @@
 import requests
 import json
 from fastapi import APIRouter, Response
-from schema.recurso_schema import RecursoSchema
-from schema.tarea_schema import TareaSchema
 from schema.bloque_laboral_schema import BloqueLaboralSchema
 user = APIRouter()
 from config.db import engine
-from model.recursos import recursos
-from model.tareas import *
 from model.bloques_laborales import *
 from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 from fastapi.responses import JSONResponse
@@ -42,8 +38,11 @@ async def get_bloques_laborales() -> list[BloqueLaboralSchema]:
 
 @user.post("/bloque_laboral", status_code=HTTP_201_CREATED)
 async def create_bloque(data_bloque_laboral:BloqueLaboralSchema) -> BloqueLaboralSchema:
+
     if bloques_model_horas_del_recurso(data_bloque_laboral) + data_bloque_laboral.horasDelBloque > 8:
         return JSONResponse(status_code=403, content={"message": "No puedes añadir más de 8 horas en un día para un recurso"})
+    elif data_bloque_laboral.legajo not in [dict(recurso)["legajo"] for recurso in get_recursos()]:
+        return JSONResponse(status_code=403, content={"message": "Recurso inexistente"}) 
     bloque = bloques_model_create(data_bloque_laboral)
     return bloque
 
@@ -56,32 +55,7 @@ async def delete_bloque(codBloqueLaboral: int):
     
 @user.put("/bloque_laboral/{codBloqueLaboral}")
 async def update_bloque_laboral(updatedBloqueLaboral:BloqueLaboralSchema) -> BloqueLaboralSchema:
+    if updatedBloqueLaboral.legajo not in [dict(recurso)["legajo"] for recurso in get_recursos()]:
+        return JSONResponse(status_code=403, content={"message": "Recurso inexistente"})
     bloque_tras_update = bloques_model_update(updatedBloqueLaboral)
     return bloque_tras_update
-
-@user.get("/tarea")
-async def get_tareas() -> list[TareaSchema]:
-    lista_de_tareas = tareas_model_get_tareas()
-    return lista_de_tareas
-
-@user.get("/tarea/{codTarea}")
-async def get_tarea(codTarea: int) -> TareaSchema:
-    tarea = tareas_model_get_tarea(codTarea)
-    return tarea
-
-@user.post("/tarea", status_code=HTTP_201_CREATED)
-async def create_tarea(data_tarea: TareaSchema) -> TareaSchema:
-    tarea = tareas_model_create_tarea(data_tarea)
-    return tarea
-    
-@user.put("/tarea/{codTarea}")
-async def update_tarea(updatedTarea:TareaSchema) -> TareaSchema:
-    tarea = tareas_model_update(updatedTarea)
-    return tarea
-
-@user.delete("/tarea/{codTarea}", status_code=HTTP_204_NO_CONTENT)
-def delete_tarea(codTarea:int):
-    if (tareas_model_delete(codTarea) >= 1):
-        return Response(status_code = HTTP_204_NO_CONTENT)
-    else:
-        return JSONResponse(status_code=404, content={"message": "La tarea no existe"})
