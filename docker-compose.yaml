@@ -1,13 +1,13 @@
 services:
   pythonapp:
     build: /home/nacho/Facultad/Aninfo/repo_sq_8/memoSq8
-    command: uvicorn main:app
+    command: uvicorn main:app --host 0.0.0.0
     depends_on:
       - mysql
-    ports:
-      - 8008:8000
     links:
       - mysql
+    ports:
+      - 8000:8000
   
   mysql:
     image: mysql
