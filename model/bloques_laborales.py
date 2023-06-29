@@ -61,12 +61,14 @@ def bloques_model_update(updatedBloqueLaboral: BloqueLaboralSchema):
     try:
         with engine.connect() as conn:
             conn.execute(bloques_laborales.update().values(codTarea=updatedBloqueLaboral.codTarea,
+                                                           codProyectoDeLaTarea=updatedBloqueLaboral.codProyectoDeLaTarea,
                                                            legajo=updatedBloqueLaboral.legajo,
                                                            horasDelBloque=updatedBloqueLaboral.horasDelBloque,
                                                            fecha=updatedBloqueLaboral.fecha
                                                            ).where(bloques_laborales.c.codBloqueLaboral == updatedBloqueLaboral.codBloqueLaboral))
             item = conn.execute(bloques_laborales.select().where(bloques_laborales.c.codBloqueLaboral == updatedBloqueLaboral.codBloqueLaboral)).first()
             result = {"codBloqueLaboral":item.codBloqueLaboral,
+                    "codProyectoDeLaTarea": item.codProyectoDeLaTarea,
                     "codTarea":item.codTarea,
                     "legajo": item.legajo,
                     "horasDelBloque": item.horasDelBloque,
