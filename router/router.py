@@ -45,9 +45,9 @@ async def create_bloque(data_bloque_laboral:BloqueLaboralSchema) -> BloqueLabora
     bloque = bloques_model_create(data_bloque_laboral)
     return bloque
 
-@user.delete("/bloque_laboral", status_code=HTTP_204_NO_CONTENT)
-async def delete_bloque(codBloqueLaboral: int):
-    if (bloques_model_delete(codBloqueLaboral) >= 1):
+@user.delete("/{bloque_laboral}", status_code=HTTP_204_NO_CONTENT)
+async def delete_bloque(bloque_laboral: int):
+    if (bloques_model_delete(bloque_laboral) >= 1):
         return Response(status_code = HTTP_204_NO_CONTENT)
     else:
         return JSONResponse(status_code=404, content={"message": "El bloque no existe"})
