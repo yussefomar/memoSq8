@@ -34,8 +34,7 @@ def bloques_model_create(data_bloque_laboral: BloqueLaboralSchema):
     try:
         with engine.connect() as conn:
             bloque_nuevo = data_bloque_laboral.dict()
-            result = conn.execute(bloques_laborales.insert().values(bloque_nuevo))
-            bloque_nuevo["codBloqueLaboral"] = result.inserted_primary_key
+            bloque = conn.execute(bloques_laborales.insert().values(bloque_nuevo))
             return bloque_nuevo
     except Exception as e:
         raise HTTPException(status_code=500, detail="Ocurrio un error al cargar las horas laborales")
