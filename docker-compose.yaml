@@ -1,13 +1,16 @@
 services:
   pythonapp:
-    build: .
-    command: bash -c 'while !</dev/tcp/mysql/3306; do sleep 1; done; uvicorn main:app --host 0.0.0.0'    
+    image: "python:3.10.6-slim"
+    command: bash -c 'while !</dev/tcp/mysql/3306; do sleep 1; done; pip install -r requirements.txt && uvicorn main:app --host 0.0.0.0'    
     depends_on:
       - mysql
     links:
       - mysql
     ports:
       - 8009:8000
+    volumes:
+      - ".:/app"
+    working_dir: "/app"
   
   mysql:
     image: mysql

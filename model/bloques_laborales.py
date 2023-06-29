@@ -1,3 +1,4 @@
+from __future__ import annotations
 from sqlalchemy import Table, Column, ForeignKey
 from sqlalchemy.sql.sqltypes import Integer, String, DateTime
 from sqlalchemy.sql import text
@@ -33,7 +34,8 @@ def bloques_model_create(data_bloque_laboral: BloqueLaboralSchema):
     try:
         with engine.connect() as conn:
             bloque_nuevo = data_bloque_laboral.dict()
-            bloque = conn.execute(bloques_laborales.insert().values(bloque_nuevo))
+            result = conn.execute(bloques_laborales.insert().values(bloque_nuevo))
+            bloque_nuevo["codBloqueLaboral"] = result.inserted_primary_key
             return bloque_nuevo
     except Exception as e:
         raise HTTPException(status_code=500, detail="Ocurrio un error al cargar las horas laborales")
@@ -45,7 +47,8 @@ def bloques_model_get() -> list[BloqueLaboralSchema]:
             bloques = []
             for item in result:
                 bloques.append({"codBloqueLaboral":item.codBloqueLaboral,\
-                                 "codTarea":item.codTarea,\
+                                "codTarea":item.codTarea,\
+                                "codProyectoDeLaTarea":item.codProyectoDeLaTarea,\
                                 "legajo": item.legajo,\
                                 "horasDelBloque": item.horasDelBloque,\
                                 "fecha": item.fecha})
