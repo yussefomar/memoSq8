@@ -1,9 +1,11 @@
 from pydantic import BaseModel, validator
 from typing import  Optional
 from datetime import datetime
+import requests
 
 class BloqueLaboralSchema(BaseModel):
     codBloqueLaboral:Optional[int]
+    codProyectoDeLaTarea:int
     codTarea:int
     legajo:int
     horasDelBloque:int
@@ -25,10 +27,20 @@ class BloqueLaboralSchema(BaseModel):
 
     @validator('legajo')
     def validate_legajo(cls, legajo):
-        if legajo <= 0:
-            raise ValueError("El valor de legajo debe ser mayor que 0")
+        API = "https://anypoint.mulesoft.com/mocking/api/v1/sources/exchange/assets/754f50e8-20d8-4223-bbdc-56d50131d0ae/recursos-psa/1.0.1/m/api/recursos" 
+        recursos = requests.get(API).json()
+        if legajo not in [dict(recurso)["legajo"] for recurso in recursos]:
+            raise ValueError("No existe dicho recurso")
         return legajo
-        
+    
+    @validator('codProyectoDeLaTarea')
+    def validate_proyecto(cls, codProyectoDeLaTarea):
+        api_call = f"https://tribu-c-proyectos-backend.onrender.com/projects/{codProyectoDeLaTarea}"
+        if not requests.get(api_call):
+            raise ValueError("No existe el proyecto")
+        return codProyectoDeLaTarea
+
+
 
 
 

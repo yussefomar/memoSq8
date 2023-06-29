@@ -41,8 +41,6 @@ async def create_bloque(data_bloque_laboral:BloqueLaboralSchema) -> BloqueLabora
 
     if bloques_model_horas_del_recurso(data_bloque_laboral) + data_bloque_laboral.horasDelBloque > 8:
         return JSONResponse(status_code=403, content={"message": "No puedes añadir más de 8 horas en un día para un recurso"})
-    elif data_bloque_laboral.legajo not in [dict(recurso)["legajo"] for recurso in get_recursos()]:
-        return JSONResponse(status_code=403, content={"message": "Recurso inexistente"}) 
     bloque = bloques_model_create(data_bloque_laboral)
     return bloque
 
@@ -55,7 +53,5 @@ async def delete_bloque(codBloqueLaboral: int):
     
 @user.put("/bloque_laboral/{codBloqueLaboral}")
 async def update_bloque_laboral(updatedBloqueLaboral:BloqueLaboralSchema) -> BloqueLaboralSchema:
-    if updatedBloqueLaboral.legajo not in [dict(recurso)["legajo"] for recurso in get_recursos()]:
-        return JSONResponse(status_code=403, content={"message": "Recurso inexistente"})
     bloque_tras_update = bloques_model_update(updatedBloqueLaboral)
     return bloque_tras_update

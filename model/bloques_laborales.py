@@ -7,7 +7,8 @@ from fastapi import HTTPException
 
 bloques_laborales=Table("bloques_laborales", meta_data,
                Column("codBloqueLaboral",Integer, primary_key=True),
-               Column("codTarea", Integer, ForeignKey("tareas.codTarea"), nullable=False),
+               Column("codProyectoDeLaTarea",Integer, nullable=False),
+               Column("codTarea", Integer, nullable=False),
                Column("legajo", Integer, nullable=False),
                Column("horasDelBloque", Integer, nullable=False),
                Column("fecha", DateTime, nullable=False)
@@ -26,10 +27,7 @@ def bloques_model_horas_del_recurso(data_bloque_laboral: BloqueLaboralSchema):
                 """)))[0][0]
             return 0 if not horas_cargadas_en_usuario else horas_cargadas_en_usuario
     except Exception as e:
-        print(e)
         raise HTTPException(status_code=500, detail="Ocurrio un error al cargar las horas laborales")
-
-
 
 def bloques_model_create(data_bloque_laboral: BloqueLaboralSchema):
     try:
