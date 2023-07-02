@@ -33,12 +33,12 @@ class BloqueLaboralSchema(BaseModel):
             raise ValueError("No existe dicho recurso")
         return legajo
     
-    @validator('codProyectoDeLaTarea')
-    def validate_proyecto(cls, codProyectoDeLaTarea):
-        api_call = f"https://tribu-c-proyectos-backend.onrender.com/projects/{codProyectoDeLaTarea}"
-        if not requests.get(api_call):
-            raise ValueError("No existe el proyecto")
-        return codProyectoDeLaTarea
+    # @validator('codProyectoDeLaTarea')
+    # def validate_proyecto(cls, codProyectoDeLaTarea):
+    #     api_call = f"https://tribu-c-proyectos-backend.onrender.com/projects/{codProyectoDeLaTarea}"
+    #     if not requests.get(api_call):
+    #         raise ValueError("No existe el proyecto")
+    #     return codProyectoDeLaTarea
 
 
 
